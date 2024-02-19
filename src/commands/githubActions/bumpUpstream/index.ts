@@ -87,6 +87,8 @@ async function gaBumpUpstreamHandler({
     ? [ethProvider, ...defaultEthProviders.filter(p => p !== ethProvider)]
     : [ethProvider];
 
+  let isReleaseCandidate = false;
+
   console.log(`
 Arguments - ${JSON.stringify({
     upstreamRepos,
@@ -132,12 +134,15 @@ Compose - ${JSON.stringify(compose, null, 2)}
 
     if (isUndesiredRealease(newVersion)) {
       console.log(`This is a realease candidate - ${repoSlug}: ${newVersion}`);
+      isReleaseCandidate = true;
       return;
     }
     upstreamRepoVersions.set(argName, { repo, repoSlug, newVersion });
 
     console.log(`Fetch latest version(s) - ${repoSlug}: ${newVersion}`);
   }
+
+  if (isReleaseCandidate) return;
 
   // Compute branch name
   const branch =
